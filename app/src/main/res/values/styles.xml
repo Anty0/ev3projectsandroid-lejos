@@ -1,0 +1,43 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="cardViewTheme">@style/CardView.Dark</item>
+        <item name="appBarOverlay">@style/AppTheme.AppBarOverlay</item>
+        <item name="popupOverlay">@style/AppTheme.PopupOverlay</item>
+        <item name="titleTextAppearance">@style/TextAppearance.AppTheme.Title</item>
+        <item name="textAppearanceListItem">@style/TextAppearance.AppCompat.Subhead</item>
+        <item name="textAppearanceListItemSmall">@style/TextAppearance.AppCompat.Subhead.Grey</item>
+        <item name="android:progressBarStyle">@style/Widget.AppCompat.ProgressBar.Bigger</item>
+        <item name="android:progressBarStyleHorizontal">
+            @style/Widget.AppCompat.ProgressBar.Horizontal
+        </item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar"/>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat"/>
+
+    <style name="TextAppearance.AppCompat.Subhead.Grey" parent="TextAppearance.AppCompat.Subhead">
+        <item name="android:textColor">#C0C0C0</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TextAppearance.AppTheme.Title" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="Widget.AppCompat.ProgressBar.Bigger" parent="Widget.AppCompat.ProgressBar">
+        <item name="android:minHeight">64dp</item>
+        <item name="android:minWidth">64dp</item>
+    </style>
+
+</resources>

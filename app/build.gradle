@@ -1,0 +1,78 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.2"
+    defaultConfig {
+        applicationId "eu.codetopic.anty.ev3projectsandroid"
+        minSdkVersion 24
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        /*jackOptions {I haven't got enough ram to use jack :(
+            enabled true
+        }*/
+    }
+    buildTypes {
+        release {
+            //versionNameSuffix '-beta'
+            minifyEnabled true
+            List<?> proFiles = new ArrayList<>()//TODO: maybe find better way
+            proFiles.add(getDefaultProguardFile('proguard-android.txt'))
+            proFiles.addAll(file('./proguard').listFiles().collect())
+            proFiles.add('proguard-rules.pro')
+            setProguardFiles(proFiles)
+
+            debuggable false
+            jniDebuggable false
+            renderscriptDebuggable false
+            renderscriptOptimLevel 14
+            zipAlignEnabled true
+            shrinkResources true
+        }
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
+            minifyEnabled false
+            debuggable true
+            jniDebuggable false
+            renderscriptDebuggable false
+            renderscriptOptimLevel 14
+            zipAlignEnabled true
+            shrinkResources false
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7//8
+        targetCompatibility JavaVersion.VERSION_1_7//8
+    }
+    productFlavors {
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+    testCompile 'junit:junit:4.12'
+    androidTestCompile 'com.android.support:support-annotations:24.2.1'
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'com.android.support.test:rules:0.5'
+    //androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    //androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
+
+    debugCompile project(path: ':utils', configuration: 'utilsDebug')
+    releaseCompile project(path: ':utils', configuration: 'utilsRelease')
+
+    compile 'com.jakewharton:butterknife:8.4.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.jjoe64:graphview:4.2.1'
+    /*compile('com.mikepenz:aboutlibraries:5.8.1@aar') {
+        transitive = true
+    }*/
+}
