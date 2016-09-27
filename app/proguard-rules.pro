@@ -18,3 +18,6 @@
 
 # Preserve annotations, line numbers, and source file names
 -keepattributes *Annotation*,SourceFile,LineNumberTable
+
+# Keep lejos classes
+-keep * lejos.** { *; }

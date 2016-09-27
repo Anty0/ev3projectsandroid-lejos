@@ -6,9 +6,15 @@
         android:checkableBehavior="single">
 
         <item
-            android:id="@+id/nav_some_item"
-            android:icon="@drawable/ic_action_settings"
-            android:title="@string/action_settings"/>
+            android:id="@+id/nav_connection"
+            android:icon="@drawable/ic_home_dashboard"
+            android:title="@string/title_fragment_connect" /><!--TODO: another icon-->
+
+        <item
+            android:id="@+id/nav_remote_control"
+            android:enabled="false"
+            android:icon="@drawable/ic_home_dashboard"
+            android:title="@string/title_fragment_remote_control" /><!--TODO: another icon-->
 
     </group>
 
