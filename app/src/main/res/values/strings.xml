@@ -4,7 +4,9 @@
     <string name="title_activity_debug_info">Debugging info</string>
 
     <string name="title_fragment_connect">Connection</string>
+    <string name="title_fragment_test_model">Test model</string>
     <string name="title_fragment_remote_control">Remote control</string>
+    <string name="title_fragment_advanced_remote_control">Advanced Remote control</string>
 
     <string name="action_settings">Settings</string>
     <string name="action_debug">Debug</string>
@@ -13,6 +15,10 @@
 
     <string name="but_connect">Connect</string>
     <string name="but_disconnect">Disconnect</string>
+    <string name="but_add_model">Add Model</string>
 
-    <string name="toast_action_failed">Action for %1$s failed</string>
+    <string name="toast_text_action_failed">Action for %1$s failed</string>
+    <string name="toast_text_connection_required">Connect to EV3 first</string>
+    <string name="but_test_forward">Forward 50cm</string>
+    <string name="but_test_rotate">Rotate 10*360°</string>
 </resources>

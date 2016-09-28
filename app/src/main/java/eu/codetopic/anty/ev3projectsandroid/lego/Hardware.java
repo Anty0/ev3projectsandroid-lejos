@@ -6,10 +6,11 @@ import java.io.Closeable;
 import java.io.IOException;
 
 import eu.codetopic.anty.ev3projectsandroid.AppBase;
+import eu.codetopic.anty.ev3projectsandroid.lego.model.Model;
 import lejos.hardware.BrickFinder;
 import lejos.remote.ev3.RemoteRequestEV3;
 
-public final class Hardware implements Closeable {// TODO: 27.9.16 make it more universal and add option to configure own model
+public final class Hardware implements Closeable {
 
     private static final String LOG_TAG = "Hardware";
     public static final String ACTION_CONNECTED_STATE_CHANGED =
@@ -18,21 +19,23 @@ public final class Hardware implements Closeable {// TODO: 27.9.16 make it more 
 
     private final String brickAddress;
     private final RemoteRequestEV3 ev3;
+    private final Model model;
 
-    private Hardware(String brickAddress) throws IOException {
+    private Hardware(String brickAddress, Model model) throws IOException {
         this.brickAddress = brickAddress;
         this.ev3 = new RemoteRequestEV3(brickAddress);
         BrickFinder.setDefault(ev3);
-        // TODO: 27.9.16 initialize other hardware
+        this.model = model;
+        this.model.initialize(ev3);
     }
 
     public static synchronized Hardware get() {
         return INSTANCE;
     }
 
-    public static synchronized Hardware connect(String brickAddress) throws IOException {
+    public static synchronized Hardware connect(String brickAddress, Model model) throws IOException {
         disconnectInternal();
-        INSTANCE = new Hardware(brickAddress);
+        INSTANCE = new Hardware(brickAddress, model);
         AppBase.broadcasts.sendBroadcast(new Intent(ACTION_CONNECTED_STATE_CHANGED));
         return get();
     }
@@ -61,8 +64,13 @@ public final class Hardware implements Closeable {// TODO: 27.9.16 make it more 
         return ev3;
     }
 
+    public Model getModel() {
+        return model;
+    }
+
     @Override
     public void close() throws IOException {
+        model.close();
         ev3.disConnect();
     }
 }

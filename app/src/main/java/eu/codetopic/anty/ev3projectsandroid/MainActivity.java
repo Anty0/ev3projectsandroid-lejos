@@ -14,6 +14,9 @@ import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import eu.codetopic.anty.ev3projectsandroid.fragment.AdvancedRemoteControl;
+import eu.codetopic.anty.ev3projectsandroid.fragment.ConnectionFragment;
+import eu.codetopic.anty.ev3projectsandroid.fragment.RemoteControlFragment;
 import eu.codetopic.anty.ev3projectsandroid.lego.Hardware;
 import eu.codetopic.utils.ui.activity.navigation.NavigationActivity;
 
@@ -57,6 +60,9 @@ public class MainActivity extends NavigationActivity {
         } else if (fragmentClass.equals(RemoteControlFragment.class)) {
             menu.findItem(R.id.nav_remote_control).setChecked(true);
             return true;
+        } else if (fragmentClass.equals(AdvancedRemoteControl.class)) {
+            menu.findItem(R.id.nav_advanced_remote_control).setChecked(true);
+            return true;
         }
 
         return super.onUpdateSelectedNavigationMenuItem(currentFragment, menu);
@@ -74,6 +80,7 @@ public class MainActivity extends NavigationActivity {
         }
 
         menu.findItem(R.id.nav_remote_control).setEnabled(true);// TODO: 27.9.16 enable here all items that requires to be connected
+        menu.findItem(R.id.nav_advanced_remote_control).setEnabled(true);
         return true;
     }
 
@@ -86,6 +93,9 @@ public class MainActivity extends NavigationActivity {
             return true;
         } else if (id == R.id.nav_remote_control) {
             replaceFragment(RemoteControlFragment.class);
+            return true;
+        } else if (id == R.id.nav_advanced_remote_control) {
+            replaceFragment(AdvancedRemoteControl.class);
             return true;
         }
 
