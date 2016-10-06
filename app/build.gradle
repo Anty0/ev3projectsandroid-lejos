@@ -64,6 +64,8 @@ dependencies {
     //androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
     //androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
 
+    compile project(':ev3projectsbase')
+
     //compile files(System.getenv('EV3_HOME') + "/lib/ev3/dbusjava.jar")
     //compile files(System.getenv('EV3_HOME') + "/lib/ev3/ev3classes.jar")
     //compile file(System.getenv('EV3_HOME') + "/lib/ev3/3rdparty/opencv-2411.jar")

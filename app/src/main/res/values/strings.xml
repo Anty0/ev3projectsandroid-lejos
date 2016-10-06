@@ -11,14 +11,17 @@
     <string name="action_settings">Settings</string>
     <string name="action_debug">Debug</string>
 
+    <string name="text_no_model">No model</string>
+
     <string name="text_view_connect_ip_address">IP Address</string>
 
     <string name="but_connect">Connect</string>
     <string name="but_disconnect">Disconnect</string>
     <string name="but_add_model">Add Model</string>
-
-    <string name="toast_text_action_failed">Action for %1$s failed</string>
-    <string name="toast_text_connection_required">Connect to EV3 first</string>
     <string name="but_test_forward">Forward 50cm</string>
     <string name="but_test_rotate">Rotate 10*360°</string>
+
+    <string name="toast_text_action_failed">Action for %s failed</string>
+    <string name="toast_text_connection_required">Connect to EV3 and setup your model first</string>
+    <string name="toast_text_connection_lost">Connection to %s was lost</string>
 </resources>

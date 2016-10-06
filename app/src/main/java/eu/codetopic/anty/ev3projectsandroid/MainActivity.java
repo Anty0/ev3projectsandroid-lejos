@@ -7,17 +7,17 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import eu.codetopic.anty.ev3projectsandroid.fragment.AdvancedRemoteControl;
 import eu.codetopic.anty.ev3projectsandroid.fragment.ConnectionFragment;
 import eu.codetopic.anty.ev3projectsandroid.fragment.RemoteControlFragment;
-import eu.codetopic.anty.ev3projectsandroid.lego.Hardware;
+import eu.codetopic.anty.ev3projectsandroid.utils.Constants;
+import eu.codetopic.anty.ev3projectsbase.ClientConnection;
 import eu.codetopic.utils.ui.activity.navigation.NavigationActivity;
 
 public class MainActivity extends NavigationActivity {
@@ -32,14 +32,14 @@ public class MainActivity extends NavigationActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+        /*NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
         if (navView != null) {
             navView.setItemTextColor(ContextCompat.getColorStateList(this, android.R.color.white));
             navView.setItemIconTintList(ContextCompat.getColorStateList(this, android.R.color.white));
-        }
+        }*/
 
-        AppBase.broadcasts.registerReceiver(mConnectionStateChangedReceiver,
-                new IntentFilter(Hardware.ACTION_CONNECTED_STATE_CHANGED));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mConnectionStateChangedReceiver,
+                new IntentFilter(Constants.ACTION_BRICK_CONNECTED_STATE_CHANGED));
         mConnectionStateChangedReceiver.onReceive(this, null);
     }
 
@@ -74,13 +74,13 @@ public class MainActivity extends NavigationActivity {
         getMenuInflater().inflate(R.menu.activity_main_drawer, menu);
         if (BuildConfig.DEBUG) menu.findItem(R.id.nav_debug).setVisible(true);
 
-        if (!Hardware.isConnected()) {
+        if (!ClientConnection.isModelSet()) {
             replaceFragment(ConnectionFragment.class);
             return true;
         }
 
-        menu.findItem(R.id.nav_remote_control).setEnabled(true);// TODO: 27.9.16 enable here all items that requires to be connected
-        menu.findItem(R.id.nav_advanced_remote_control).setEnabled(true);
+        menu.findItem(R.id.nav_remote_control).setVisible(true);// TODO: 27.9.16 make visible here all items that requires to be connected
+        menu.findItem(R.id.nav_advanced_remote_control).setVisible(true);
         return true;
     }
 
@@ -104,7 +104,7 @@ public class MainActivity extends NavigationActivity {
 
     @Override
     protected void onDestroy() {
-        AppBase.broadcasts.unregisterReceiver(mConnectionStateChangedReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mConnectionStateChangedReceiver);
         super.onDestroy();
     }
 

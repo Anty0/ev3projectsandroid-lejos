@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +15,17 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.util.List;
+import java.util.Objects;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import eu.codetopic.anty.ev3projectsandroid.AppBase;
 import eu.codetopic.anty.ev3projectsandroid.R;
-import eu.codetopic.anty.ev3projectsandroid.lego.Hardware;
-import eu.codetopic.anty.ev3projectsandroid.lego.model.Model;
+import eu.codetopic.anty.ev3projectsandroid.utils.Constants;
+import eu.codetopic.anty.ev3projectsandroid.utils.ModelInfoCustomItem;
+import eu.codetopic.anty.ev3projectsbase.ClientConnection;
+import eu.codetopic.anty.ev3projectsbase.ModelInfo;
 import eu.codetopic.utils.Utils;
 import eu.codetopic.utils.log.Log;
 import eu.codetopic.utils.thread.JobUtils;
@@ -38,17 +43,25 @@ public class ConnectionFragment extends NavigationFragment implements TitleProvi
     @BindView(R.id.spinnerSelectModel) public Spinner mSpinnerSelectModel;
     @BindView(R.id.editTextConnect) public EditText mEditTextConnect;
     private Unbinder mUnbinder;
-    private CustomItemAdapter<Model> mModelsAdapter;
+    private CustomItemAdapter<ModelInfoCustomItem> mModelsAdapter;
     private final BroadcastReceiver mConnectionStateChangedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            boolean connected = Hardware.isConnected();
-            mButtonConnectDisconnect.setText(connected
-                    ? R.string.but_disconnect : R.string.but_connect);
-            if (connected) mEditTextConnect.setText(Hardware.get().getBrickAddress());
+            boolean connected = ClientConnection.isConnected();
+            mButtonConnectDisconnect.setText(connected ? R.string.but_disconnect : R.string.but_connect);
+            if (connected) mEditTextConnect.setText(ClientConnection.getConnectionAddress());
             mEditTextConnect.setEnabled(!connected);
-            if (connected) mSpinnerSelectModel.setSelection(mModelsAdapter
-                    .getItemPosition(Hardware.get().getModel()));
+            if (connected) {
+                String activeModelName = ClientConnection.getActiveModelName();
+                List<ModelInfoCustomItem> items = mModelsAdapter.getItems();
+                for (int i = 0, size = items.size(); i < size; i++) {
+                    ModelInfo modelInfo = items.get(i).getModelInfo();
+                    if (Objects.equals(activeModelName, modelInfo == null ? null : modelInfo.name)) {
+                        mSpinnerSelectModel.setSelection(i);
+                        break;
+                    }
+                }
+            }
             mSpinnerSelectModel.setEnabled(!connected);
             mButtonAddModel.setEnabled(!connected);
         }
@@ -65,13 +78,14 @@ public class ConnectionFragment extends NavigationFragment implements TitleProvi
         super.onViewCreated(view, savedInstanceState);
         mUnbinder = ButterKnife.bind(this, view);
 
-        mModelsAdapter = new CustomItemAdapter<>(getContext(), Model.getAvailableModels(getContext()));
+        mModelsAdapter = new CustomItemAdapter<>(getContext(), ModelInfoCustomItem
+                .wrapAll(Constants.getAvailableModels(getContext())));
         mSpinnerSelectModel.setAdapter(mModelsAdapter.forSpinner());
         mButtonConnectDisconnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 NetworkJob.start(getHolder(), new ConnectDisconnectWork(getContext(),
-                        mEditTextConnect.getText().toString(), (Model) mSpinnerSelectModel.getSelectedItem()));
+                        mEditTextConnect.getText().toString(), (ModelInfo) mSpinnerSelectModel.getSelectedItem()));
             }
         });
         mButtonAddModel.setOnClickListener(new View.OnClickListener() {
@@ -85,14 +99,14 @@ public class ConnectionFragment extends NavigationFragment implements TitleProvi
     @Override
     public void onStart() {
         super.onStart();
-        AppBase.broadcasts.registerReceiver(mConnectionStateChangedReceiver,
-                new IntentFilter(Hardware.ACTION_CONNECTED_STATE_CHANGED));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mConnectionStateChangedReceiver,
+                new IntentFilter(Constants.ACTION_BRICK_CONNECTED_STATE_CHANGED));
         mConnectionStateChangedReceiver.onReceive(getContext(), null);
     }
 
     @Override
     public void onStop() {
-        AppBase.broadcasts.unregisterReceiver(mConnectionStateChangedReceiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mConnectionStateChangedReceiver);
         super.onStop();
     }
 
@@ -115,9 +129,9 @@ public class ConnectionFragment extends NavigationFragment implements TitleProvi
 
         private final Context context;
         private final String ipAddress;
-        private final Model model;
+        private final ModelInfo model;
 
-        ConnectDisconnectWork(Context context, String ipAddress, Model model) {
+        ConnectDisconnectWork(Context context, String ipAddress, ModelInfo model) {
             this.context = context.getApplicationContext();
             this.ipAddress = ipAddress;
             this.model = model;
@@ -126,8 +140,12 @@ public class ConnectionFragment extends NavigationFragment implements TitleProvi
         @Override
         public void run() throws Throwable {
             try {
-                if (Hardware.isConnected()) Hardware.disconnect();
-                else Hardware.connect(ipAddress, model);
+                if (ClientConnection.isConnected()) {
+                    ClientConnection.disconnect();
+                } else {
+                    ClientConnection.connect(ipAddress);// TODO: 5.10.16 separate setup model and connect
+                    ClientConnection.setupModel(model);
+                }
             } catch (Throwable t) {
                 Log.d(LOG_TAG, "run", t);
                 JobUtils.runOnMainThread(new Runnable() {

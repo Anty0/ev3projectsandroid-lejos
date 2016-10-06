@@ -11,10 +11,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import eu.codetopic.anty.ev3projectsandroid.R;
-import eu.codetopic.anty.ev3projectsandroid.lego.Hardware;
+import eu.codetopic.anty.ev3projectsandroid.utils.ModeStarterWork;
 import eu.codetopic.utils.thread.job.network.NetworkJob;
 import eu.codetopic.utils.ui.activity.fragment.TitleProvider;
-import lejos.robotics.navigation.ArcRotateMoveController;
+
+import static eu.codetopic.anty.ev3projectsbase.RMIModes.BasicMode.TEST_FORWARD;
+import static eu.codetopic.anty.ev3projectsbase.RMIModes.BasicMode.TEST_ROTATE;
 
 public class TestModelFragment extends BaseControlFragment implements TitleProvider {// TODO: 28.9.16 complete
 
@@ -33,17 +35,17 @@ public class TestModelFragment extends BaseControlFragment implements TitleProvi
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mUnbinder = ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);// TODO: 28.9.16 update enabled of buttons based on is supported state of modes
         mButtonTestForward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NetworkJob.start(new ForwardWork());
+                NetworkJob.start(new ModeStarterWork(TEST_FORWARD));
             }
         });
         mButtonTestRotate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NetworkJob.start(new RotateWork());
+                NetworkJob.start(new ModeStarterWork(TEST_ROTATE));
             }
         });
     }
@@ -58,25 +60,5 @@ public class TestModelFragment extends BaseControlFragment implements TitleProvi
     @Override
     public CharSequence getTitle() {
         return getText(R.string.title_fragment_test_model);
-    }
-
-    private static class ForwardWork implements NetworkJob.Work {
-
-        @Override
-        public void run() throws Throwable {
-            ArcRotateMoveController pilot = Hardware.get().getModel().getPilot();
-            if (pilot == null) return;
-            pilot.travel(50, true);
-        }
-    }
-
-    private static class RotateWork implements NetworkJob.Work {
-
-        @Override
-        public void run() throws Throwable {
-            ArcRotateMoveController pilot = Hardware.get().getModel().getPilot();
-            if (pilot == null) return;
-            pilot.rotate(10 * 360, true);
-        }
     }
 }

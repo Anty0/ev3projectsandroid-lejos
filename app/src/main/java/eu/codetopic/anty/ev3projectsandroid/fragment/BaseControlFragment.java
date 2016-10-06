@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import android.widget.Toast;
 
 import eu.codetopic.anty.ev3projectsandroid.R;
-import eu.codetopic.anty.ev3projectsandroid.lego.Hardware;
+import eu.codetopic.anty.ev3projectsbase.ClientConnection;
 import eu.codetopic.utils.ui.activity.navigation.NavigationFragment;
 
 public abstract class BaseControlFragment extends NavigationFragment {
@@ -15,7 +15,7 @@ public abstract class BaseControlFragment extends NavigationFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!Hardware.isConnected()) {
+        if (!ClientConnection.isModelSet()) {
             removeSelfFragment();
             Toast.makeText(getContext(), R.string.toast_text_connection_required, Toast.LENGTH_LONG).show();
         }

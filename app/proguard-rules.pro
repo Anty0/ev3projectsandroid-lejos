@@ -21,3 +21,6 @@
 
 # Keep lejos classes
 -keep * lejos.** { *; }
+
+# Keep project base classes
+-keep * eu.codetopic.anty.ev3projectsbase.** { *; }
