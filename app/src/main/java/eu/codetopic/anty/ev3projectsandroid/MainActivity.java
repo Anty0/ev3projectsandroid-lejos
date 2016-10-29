@@ -7,8 +7,10 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +18,8 @@ import android.view.MenuItem;
 import eu.codetopic.anty.ev3projectsandroid.fragment.AdvancedRemoteControl;
 import eu.codetopic.anty.ev3projectsandroid.fragment.ConnectionFragment;
 import eu.codetopic.anty.ev3projectsandroid.fragment.RemoteControlFragment;
+import eu.codetopic.anty.ev3projectsandroid.fragment.TestModelFragment;
+import eu.codetopic.anty.ev3projectsandroid.fragment.slam.SlamControlFragment;
 import eu.codetopic.anty.ev3projectsandroid.utils.Constants;
 import eu.codetopic.anty.ev3projectsbase.ClientConnection;
 import eu.codetopic.utils.ui.activity.navigation.NavigationActivity;
@@ -32,11 +36,11 @@ public class MainActivity extends NavigationActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
         if (navView != null) {
-            navView.setItemTextColor(ContextCompat.getColorStateList(this, android.R.color.white));
-            navView.setItemIconTintList(ContextCompat.getColorStateList(this, android.R.color.white));
-        }*/
+            navView.setItemTextColor(ContextCompat.getColorStateList(this, R.color.nav_menu_item));
+            navView.setItemIconTintList(ContextCompat.getColorStateList(this, R.color.nav_menu_item));
+        }
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mConnectionStateChangedReceiver,
                 new IntentFilter(Constants.ACTION_BRICK_CONNECTED_STATE_CHANGED));
@@ -57,11 +61,17 @@ public class MainActivity extends NavigationActivity {
         if (fragmentClass.equals(ConnectionFragment.class)) {
             menu.findItem(R.id.nav_connection).setChecked(true);
             return true;
+        } else if (fragmentClass.equals(TestModelFragment.class)) {
+            menu.findItem(R.id.nav_test_model).setChecked(true);
+            return true;
         } else if (fragmentClass.equals(RemoteControlFragment.class)) {
             menu.findItem(R.id.nav_remote_control).setChecked(true);
             return true;
         } else if (fragmentClass.equals(AdvancedRemoteControl.class)) {
             menu.findItem(R.id.nav_advanced_remote_control).setChecked(true);
+            return true;
+        } else if (fragmentClass.equals(SlamControlFragment.class)) {
+            menu.findItem(R.id.nav_slam_control).setChecked(true);
             return true;
         }
 
@@ -79,8 +89,10 @@ public class MainActivity extends NavigationActivity {
             return true;
         }
 
-        menu.findItem(R.id.nav_remote_control).setVisible(true);// TODO: 27.9.16 make visible here all items that requires to be connected
-        menu.findItem(R.id.nav_advanced_remote_control).setVisible(true);
+        menu.findItem(R.id.nav_test_model).setEnabled(true);// TODO: 27.9.16 make visible here all items that requires to be connected
+        menu.findItem(R.id.nav_remote_control).setEnabled(true);
+        menu.findItem(R.id.nav_advanced_remote_control).setEnabled(true);
+        menu.findItem(R.id.nav_slam_control).setEnabled(true);
         return true;
     }
 
@@ -91,11 +103,23 @@ public class MainActivity extends NavigationActivity {
         if (id == R.id.nav_connection) {
             replaceFragment(ConnectionFragment.class);
             return true;
+        } else if (id == R.id.nav_test_model) {
+            replaceFragment(TestModelFragment.class);
+            return true;
         } else if (id == R.id.nav_remote_control) {
             replaceFragment(RemoteControlFragment.class);
             return true;
         } else if (id == R.id.nav_advanced_remote_control) {
             replaceFragment(AdvancedRemoteControl.class);
+            return true;
+        } else if (id == R.id.nav_slam_control) {
+            replaceFragment(SlamControlFragment.class);
+            return true;
+        } else if (id == R.id.nav_settings) {
+            //startActivity(new Intent(this, SettingsActivity.class));// TODO: 14.10.16 create
+            return true;
+        } else if (id == R.id.nav_debug) {
+            startActivity(new Intent(this, DebugActivity.class));
             return true;
         }
 

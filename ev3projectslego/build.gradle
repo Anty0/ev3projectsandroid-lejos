@@ -1,3 +1,12 @@
+buildscript {//propdeps plugin
+    repositories {
+        maven { url 'http://repo.spring.io/plugins-release' }
+    }
+    dependencies {
+        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
+    }
+}
+
 group group
 version version
 
@@ -5,9 +14,9 @@ apply plugin: 'java'
 apply plugin: 'application'
 
 apply plugin: 'propdeps'
-apply plugin: 'propdeps-maven'
+//apply plugin: 'propdeps-maven'
 apply plugin: 'propdeps-idea'
-apply plugin: 'propdeps-eclipse'
+//apply plugin: 'propdeps-eclipse'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8

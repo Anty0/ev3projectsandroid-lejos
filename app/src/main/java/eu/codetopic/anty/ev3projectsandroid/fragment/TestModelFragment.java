@@ -39,13 +39,13 @@ public class TestModelFragment extends BaseControlFragment implements TitleProvi
         mButtonTestForward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NetworkJob.start(new ModeStarterWork(TEST_FORWARD));
+                NetworkJob.start(new ModeStarterWork(getContext(), TEST_FORWARD));
             }
         });
         mButtonTestRotate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NetworkJob.start(new ModeStarterWork(TEST_ROTATE));
+                NetworkJob.start(new ModeStarterWork(getContext(), TEST_ROTATE));
             }
         });
     }

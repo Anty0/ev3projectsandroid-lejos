@@ -8,8 +8,12 @@ public abstract class LoopJob {
 
     private Looper looper;
 
-    public Looper getMeLooper() {
+    public Looper getMyLooper() {
         return looper;
+    }
+
+    public boolean isActive() {
+        return looper != null;
     }
 
     public final void start() {
@@ -32,12 +36,6 @@ public abstract class LoopJob {
     protected abstract boolean handleLoop();
 
     protected void onQuit(@NotNull Looper looper) {
-    }
-
-    final synchronized void notifyQuit() {
-        if (looper == null) return;
-        onQuit(looper);
-        looper = null;
     }
 
     public final synchronized void quit() {

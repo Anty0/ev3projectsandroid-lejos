@@ -10,7 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        /*jackOptions {I haven't got enough ram to use jack :(
+        /*jackOptions {//I haven't got enough ram to use jack :(
             enabled true
         }*/
     }
@@ -64,11 +64,11 @@ dependencies {
     //androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
     //androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
 
-    compile project(':ev3projectsbase')
-
     //compile files(System.getenv('EV3_HOME') + "/lib/ev3/dbusjava.jar")
     //compile files(System.getenv('EV3_HOME') + "/lib/ev3/ev3classes.jar")
     //compile file(System.getenv('EV3_HOME') + "/lib/ev3/3rdparty/opencv-2411.jar")
+
+    compile project(':ev3projectsbase')
 
     debugCompile project(path: ':utils', configuration: 'utilsDebug')
     releaseCompile project(path: ':utils', configuration: 'utilsRelease')
@@ -76,10 +76,10 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha8'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.jjoe64:graphview:4.2.1'
     /*compile('com.mikepenz:aboutlibraries:5.8.1@aar') {
         transitive = true
     }*/
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
 }

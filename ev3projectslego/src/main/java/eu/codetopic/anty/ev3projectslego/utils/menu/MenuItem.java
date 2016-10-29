@@ -4,5 +4,7 @@ public interface MenuItem {
 
     String getName();
 
+    boolean isEnabled();
+
     boolean onSelected(Menu menu, int itemIndex);
 }

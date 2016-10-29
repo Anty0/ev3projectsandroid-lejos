@@ -303,7 +303,8 @@ public class GraphicsDrawerImpl extends CommonDrawerImpl implements GraphicsDraw
      *
      * @return current color.
      */
-    public int getColor() {// TODO: 19.9.16 add support
+    @Override
+    public int getColor() {
         return rgbColor;
     }
 

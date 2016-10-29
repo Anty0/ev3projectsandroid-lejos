@@ -1,61 +1,61 @@
 package eu.codetopic.anty.ev3projectslego.hardware;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Closeable;
 import java.io.IOException;
 
-import eu.codetopic.anty.ev3projectslego.Main;
+import eu.codetopic.anty.ev3projectsbase.ModelInfo;
 import eu.codetopic.anty.ev3projectslego.hardware.model.Model;
-import lejos.hardware.BrickFinder;
-import lejos.hardware.ev3.EV3;
 import lejos.hardware.ev3.LocalEV3;
+import lejos.internal.ev3.EV3LED;
 
 public final class Hardware implements Closeable {
+// TODO: 6.10.16 maybe add change listeners
 
     private static final String LOG_TAG = "Hardware";
+    public static EV3LED LED = (EV3LED) LocalEV3.get().getLED();
     private static Hardware INSTANCE = null;
-
-    private final EV3 ev3;
     private final Model model;
 
     private Hardware(@NotNull Model model) {
-        this.ev3 = LocalEV3.get();
-        BrickFinder.setDefault(ev3);
         this.model = model;
-        this.model.initialize(ev3);
+        this.model.initialize(LocalEV3.get());
+    }
+
+    public static synchronized void saveMyModelInfo(@Nullable ModelInfo modelInfo) {// TODO: 9.10.16 add to RMIHardware
+        // TODO: 9.10.16 implement
+    }
+
+    @Nullable
+    @Contract(" -> _")// TODO: 9.10.16 remove contract after impl
+    public static synchronized ModelInfo loadMyModelInfo() {
+        return null;// TODO: 9.10.16 implement
     }
 
     public static synchronized Hardware get() {
         return INSTANCE;
     }
 
-    public static synchronized Hardware setup(@Nullable Model model) {// TODO: 6.10.16 add option to upload default model info to brick program and apply it as default on initialize
-        try {
-            if (INSTANCE != null) {
-                try {
-                    INSTANCE.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                INSTANCE = null;
+    @Contract("null -> null")
+    public static synchronized Hardware setup(@Nullable Model model) {
+        if (INSTANCE != null) {
+            try {
+                INSTANCE.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            if (model == null) return get();
-            INSTANCE = new Hardware(model);
-            return get();
-
-        } finally {
-            Main.MAIN_MENU.reloadItems();// TODO: 6.10.16 maybe find better way
+            INSTANCE = null;
         }
+        if (model == null) return null;
+        INSTANCE = new Hardware(model);
+        return INSTANCE;
     }
 
     public static synchronized boolean isSet() {
         return INSTANCE != null;
-    }
-
-    public EV3 getEv3() {
-        return ev3;
     }
 
     public Model getModel() {

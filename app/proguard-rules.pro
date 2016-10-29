@@ -24,3 +24,6 @@
 
 # Keep project base classes
 -keep * eu.codetopic.anty.ev3projectsbase.** { *; }
+
+# Keep limermi classes
+-keep * net.sf.lipermi.** { *; }

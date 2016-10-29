@@ -1,7 +1,6 @@
 package eu.codetopic.anty.ev3projectslego.utils.looper;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -12,7 +11,7 @@ public final class Looper {
 
     private static final ThreadLocal<Looper> sThreadLocal = new ThreadLocal<>();
 
-    private final List<LoopJob> jobs = new CopyOnWriteArrayList<>();
+    private final List<LoopJob> jobs = new CopyOnWriteArrayList<>(); // CopyOnWriteArrayList solves problems caused by removing jobs during its handleLoop() method
     private final Thread thread;
     private boolean running = false;
     private volatile boolean quiting = false;
@@ -28,9 +27,7 @@ public final class Looper {
         sThreadLocal.set(new Looper());
     }
 
-    public static
-    @Nullable
-    Looper myLooper() {
+    public static Looper myLooper() {
         return sThreadLocal.get();
     }
 
@@ -53,10 +50,6 @@ public final class Looper {
                 }
             }
             Thread.yield();
-        }
-
-        synchronized (me.jobs) {
-            me.jobs.forEach(LoopJob::notifyQuit);
         }
 
         me.quiting = false;
@@ -83,6 +76,18 @@ public final class Looper {
 
     public void quit() {
         quiting = true;
+    }
+
+    public void destroy() {
+        if (thread != Thread.currentThread()) {
+            throw new RuntimeException("Looper can be destroyed only on thread where was prepared");
+        }
+
+        synchronized (jobs) {
+            jobs.forEach(LoopJob::quit);
+        }
+
+        sThreadLocal.remove();
     }
 
     public

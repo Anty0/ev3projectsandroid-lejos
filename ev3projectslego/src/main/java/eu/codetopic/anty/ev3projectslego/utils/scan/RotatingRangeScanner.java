@@ -1,96 +1,85 @@
 package eu.codetopic.anty.ev3projectslego.utils.scan;
 
-import lejos.robotics.RangeFinder;
-import lejos.robotics.RangeReadings;
-import lejos.robotics.RangeScanner;
+import java.io.Closeable;
+import java.io.IOException;
+
+import eu.codetopic.anty.ev3projectsbase.slam.base.scan.ScanResults;
+import eu.codetopic.anty.ev3projectslego.utils.scan.base.RangeScanner;
+import eu.codetopic.anty.ev3projectslego.utils.scan.base.Scanner;
 import lejos.robotics.RegulatedMotor;
-import lejos.utility.Delay;
 
-public class RotatingRangeScanner implements RangeScanner {
+public class RotatingRangeScanner implements RangeScanner, Closeable {
 
-    public static final int MOTOR_SCAN_SPEED_GRAPHICS_FAST = 150;
-    public static final int MOTOR_SCAN_SPEED_GRAPHICS_SLOW = 15;
-    public static final int MOTOR_SCAN_SPEED_FASTEST_ALLOWED = 360;
     private static final String LOG_TAG = "RotatingRangeScanner";
 
-    protected final RangeFinder rangeFinder;
+    protected final Scanner scanner;
+    protected final float offsetX;
+    protected final float offsetY;
     protected final RegulatedMotor head;
-    protected final double gearRatio;
+    protected final int aroundFrom;
+    protected final int aroundTo;
+    private final float offsetRotatingY;
 
-    protected RangeReadings readings;
-    protected float[] angles = {0, 90};// default
+    public RotatingRangeScanner(Scanner scanner, float offsetX, float offsetY, float offsetRotatingY,
+                                RegulatedMotor head, int aroundAngleFrom, int aroundAngleTo) {
 
-    public RotatingRangeScanner(RegulatedMotor head, RangeFinder rangeFinder) {
-        this(head, rangeFinder, 1);
-    }
-
-    public RotatingRangeScanner(RegulatedMotor head, RangeFinder rangeFinder, double gearRatio) {
+        this.scanner = scanner;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
+        this.offsetRotatingY = offsetRotatingY;
         this.head = head;
-        this.rangeFinder = rangeFinder;
-        this.gearRatio = gearRatio;
+        this.aroundFrom = aroundAngleFrom;
+        this.aroundTo = aroundAngleTo;
 
         this.head.resetTachoCount();
-        this.head.setSpeed(MOTOR_SCAN_SPEED_FASTEST_ALLOWED);
+        this.head.setSpeed(MOTOR_SCAN_SPEED_FAST);
     }
 
-    public RangeReadings getRangeValues() {
-        if (readings == null || readings.getNumReadings() != angles.length) {
-            readings = new RangeReadings(angles.length);
+    @Override
+    public float getMaxDistance() {
+        return scanner.getMaxDistance() + Math.max(Math.abs(offsetX), Math.abs(offsetY));
+    }
+
+    @Override
+    public synchronized ScanResults aroundScan(int speed) {
+        head.stop();
+        int tacho = head.getTachoCount();
+        return Math.abs(tacho - aroundFrom) < Math.abs(tacho - aroundTo)
+                ? rangeScan(speed, aroundFrom, aroundTo) : rangeScan(speed, aroundTo, aroundFrom);
+    }
+
+    @Override
+    public synchronized ScanResults rangeScan(int speed, int angleFrom, int angleTo) {
+        ScanResults results = new ScanResults(1024);// TODO: 15.10.16 calculate approximate amount of results based on speed (and add it as parameter)
+        float maxDistance = getMaxDistance();
+
+        head.setSpeed(MOTOR_SCAN_SPEED_FAST);
+        head.rotateTo(angleFrom);
+        head.setSpeed(speed);
+        head.rotateTo(angleTo, true);
+
+        while (head.isMoving() && !Thread.currentThread().isInterrupted()) {
+            results.add(scanner.fetchDistance(), maxDistance, head.getTachoCount());
         }
 
-        head.setSpeed(MOTOR_SCAN_SPEED_FASTEST_ALLOWED);
-
-        for (int i = 0; i < angles.length; i++) {
-            rotateTo(angles[i]);
-            Delay.msDelay(50);
-            float range = rangeFinder.getRange();
-            readings.setRange(i, angles[i], range);
-        }
-        head.rotateTo(0);
-        return readings;
+        results.offset(offsetX, offsetY, offsetRotatingY);
+        return results;
     }
 
-    public float[] getAngles() {
-        return angles;
-    }
-
-    public void setAngles(float[] angles) {
-        this.angles = angles.clone();
-    }
-
-    public RegulatedMotor getHead() {
+    public synchronized RegulatedMotor getHead() {
         return head;
     }
 
-    public void forward() {
-        head.forward();
+    @Override
+    public synchronized Scanner getScanner() {
+        return scanner;
     }
 
-    public void backward() {
-        head.backward();
-    }
-
-    public void stop() {
+    @Override
+    public void close() throws IOException {
         head.stop();
-    }
-
-    public void rotateTo(float angle) {
-        rotateTo(angle, false);
-    }
-
-    public void rotateTo(float angle, boolean immediateReturn) {
-        head.rotateTo((int) (angle * gearRatio), immediateReturn);
-    }
-
-    public void setSpeed(float speed) {
-        head.setSpeed((int) (speed * gearRatio));
-    }
-
-    public float getTachoCount() {
-        return (float) (head.getTachoCount() * gearRatio);
-    }
-
-    public RangeFinder getRangeFinder() {
-        return rangeFinder;
+        head.setSpeed(MOTOR_SCAN_SPEED_FAST);
+        head.rotateTo(0);
+        head.close();
     }
 }

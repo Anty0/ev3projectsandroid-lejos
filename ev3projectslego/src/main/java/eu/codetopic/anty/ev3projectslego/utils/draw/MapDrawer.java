@@ -1,6 +1,5 @@
 package eu.codetopic.anty.ev3projectslego.utils.draw;
 
-import eu.codetopic.anty.ev3projectslego.hardware.model.Model;
 import eu.codetopic.anty.ev3projectslego.utils.Utils;
 import eu.codetopic.anty.ev3projectslego.utils.draw.canvas.Canvas;
 import eu.codetopic.anty.ev3projectslego.utils.draw.drawer.GraphicsDrawer;
@@ -67,8 +66,8 @@ public class MapDrawer extends Thread {
 
         float angle = pose.getHeading();
         drawer.drawLine(centerX, centerY,
-                centerX + (int) (Math.cos((angle - 90) * Model.DEG_TO_RAD_MUL) * 15d),
-                centerY + (int) (Math.sin((angle - 90) * Model.DEG_TO_RAD_MUL) * 15d));
+                centerX + (int) (Math.cos(Math.toRadians(angle - 90)) * 15d),
+                centerY + (int) (Math.sin(Math.toRadians(angle - 90)) * 15d));
 
 
         int wStart = (int) pose.getX() - centerX;

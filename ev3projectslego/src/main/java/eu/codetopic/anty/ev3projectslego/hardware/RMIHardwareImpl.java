@@ -12,8 +12,17 @@ public class RMIHardwareImpl extends PostJob implements RMIHardware {
     private static final String LOG_TAG = "RMIHardwareImpl";
 
     @Override
-    public void setup(@Nullable ModelInfo model) {
-        postJob(() -> Hardware.setup(model == null ? null : new ModelImpl(model)), true);
+    public void setup(@Nullable ModelInfo model) throws Throwable {
+        final Throwable[] thr = new Throwable[1];
+        postJob(() -> {
+            try {
+                Hardware.setup(model == null ? null : new ModelImpl(model));
+            } catch (Throwable t) {
+                thr[0] = t;
+            }
+        }, true);
+
+        if (thr[0] != null) throw thr[0];
     }
 
     @Override

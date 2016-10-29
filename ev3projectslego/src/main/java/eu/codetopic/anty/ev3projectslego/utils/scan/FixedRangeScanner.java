@@ -1,59 +1,57 @@
 package eu.codetopic.anty.ev3projectslego.utils.scan;
 
-import lejos.robotics.RangeFinder;
-import lejos.robotics.RangeReadings;
-import lejos.robotics.RangeScanner;
+import eu.codetopic.anty.ev3projectsbase.slam.base.scan.ScanResults;
+import eu.codetopic.anty.ev3projectslego.utils.scan.base.RangeScanner;
+import eu.codetopic.anty.ev3projectslego.utils.scan.base.Scanner;
 import lejos.robotics.navigation.RotateMoveController;
-import lejos.utility.Delay;
 
-public class FixedRangeScanner implements RangeScanner {
+public class FixedRangeScanner implements RangeScanner {// warning speed is not supported
 
     private static final String LOG_TAG = "FixedRangeScanner";
 
-    protected final RangeFinder rangeFinder;
+    protected final Scanner scanner;
     protected final RotateMoveController pilot;
+    private final float offsetY;
 
-    protected RangeReadings readings;
-    protected float[] angles;
-
-    public FixedRangeScanner(RotateMoveController pilot, RangeFinder rangeFinder) {
+    public FixedRangeScanner(Scanner scanner, float offsetY, RotateMoveController pilot) {
+        this.scanner = scanner;
+        this.offsetY = offsetY;
         this.pilot = pilot;
-        this.rangeFinder = rangeFinder;
     }
 
-    public RangeReadings getRangeValues() {
-        if (readings == null || readings.getNumReadings() != angles.length) {
-            readings = new RangeReadings(angles.length);
+    @Override
+    public float getMaxDistance() {
+        return scanner.getMaxDistance();
+    }
+
+    @Override
+    public ScanResults aroundScan(int speed) {// warning speed is not supported
+        return rangeScan(speed, 0, 360);
+    }
+
+    @Override
+    public ScanResults rangeScan(int speed, int angleFrom, int angleTo) {// warning speed is not supported
+        ScanResults results = new ScanResults(1024);// TODO: 15.10.16 calculate approximate amount of results (and add it as parameter)
+        float maxDistance = getMaxDistance();
+
+        pilot.rotate(angleFrom, false);
+
+        for (int i = angleFrom; i < angleTo; i += 20) {
+            if (Thread.currentThread().isInterrupted()) break;
+            pilot.rotate(20);
+            results.add(scanner.fetchDistance(), maxDistance, i);
         }
 
-        for (int i = 0; i < angles.length; i++) {
-            float angle;
-            if (i == 0) angle = angles[0];
-            else angle = angles[i] - angles[i - 1];
-            pilot.rotate(normalize(angle), false);
-            Delay.msDelay(50);
-            float range = rangeFinder.getRange();
-            readings.setRange(i, angles[i], range);
-        }
-        pilot.rotate(normalize(-angles[angles.length - 1]), false);
-        return readings;
-    }
-
-    public void setAngles(float[] angleSet) {
-        angles = angleSet;
-    }
-
-    private float normalize(float angle) {
-        if (angle < -180) angle += 360;
-        if (angle > 180) angle -= 360;
-        return angle;
+        results.offset(0f, 0f, offsetY);
+        return results;
     }
 
     public RotateMoveController getPilot() {
         return pilot;
     }
 
-    public RangeFinder getRangeFinder() {
-        return rangeFinder;
+    @Override
+    public Scanner getScanner() {
+        return scanner;
     }
 }

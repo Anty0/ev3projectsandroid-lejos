@@ -30,7 +30,7 @@ public class ModelInfo implements Serializable {
         EV3_LARGE, EV3_MEDIUM, NXT_LARGE
     }
 
-    public enum DistanceSensorType {
+    public enum ScannerSensorType {
         EV3_IR, EV3_ULTRASONIC, NXT_ULTRASONIC, UNKNOWN
     }
 
@@ -73,14 +73,16 @@ public class ModelInfo implements Serializable {
     public static class ScannerInfo implements Serializable {
 
         public String sensorDistancePort = "S4";
-        @Nullable public DistanceSensorType sensorType = null;
+        @NotNull public ScannerSensorType sensorType = ScannerSensorType.UNKNOWN;
+        public float rotatingOffsetY = 0f;
 
         public ScannerInfo() {
         }
 
-        public ScannerInfo(String sensorDistancePort, @Nullable DistanceSensorType sensorType) {
+        public ScannerInfo(String sensorDistancePort, @NotNull ScannerSensorType sensorType, float rotatingOffsetY) {
             this.sensorDistancePort = sensorDistancePort;
             this.sensorType = sensorType;
+            this.rotatingOffsetY = rotatingOffsetY;
         }
     }
 
@@ -88,24 +90,29 @@ public class ModelInfo implements Serializable {
 
         public String motorHeadPort = "A";
         public MotorType motorHeadType = MotorType.EV3_MEDIUM;
-        public double motorHeadGearRatio = 1d;
-        public float motorHeadAngleMin = -90f;
-        public float motorHeadAngleMax = 90f;
+        public float scannerOffsetX = 0f;
+        public float scannerOffsetY = 0f;
+        public float motorHeadGearRatio = 1f;
+        public int scanningAngleFrom = 0;
+        public int scanningAngleTo = 360;
 
         public RotatingScannerInfo() {
         }
 
-        public RotatingScannerInfo(String sensorDistancePort, @Nullable DistanceSensorType sensorType,
-                                   String motorHeadPort, MotorType motorHeadType, double motorHeadGearRatio,
-                                   float motorHeadAngleMin, float motorHeadAngleMax) {
-            super(sensorDistancePort, sensorType);
+        public RotatingScannerInfo(String sensorDistancePort, @NotNull ScannerSensorType sensorType,
+                                   float rotatingOffsetY, float scannerOffsetX, float scannerOffsetY,
+                                   String motorHeadPort, MotorType motorHeadType, float motorHeadGearRatio,
+                                   int scanningAngleFrom, int scanningAngleTo) {
+            super(sensorDistancePort, sensorType, rotatingOffsetY);
+            this.scannerOffsetX = scannerOffsetX;
+            this.scannerOffsetY = scannerOffsetY;
             this.sensorDistancePort = sensorDistancePort;
             this.sensorType = sensorType;
             this.motorHeadPort = motorHeadPort;
             this.motorHeadType = motorHeadType;
             this.motorHeadGearRatio = motorHeadGearRatio;
-            this.motorHeadAngleMin = motorHeadAngleMin;
-            this.motorHeadAngleMax = motorHeadAngleMax;
+            this.scanningAngleFrom = scanningAngleFrom;
+            this.scanningAngleTo = scanningAngleTo;
         }
     }
 

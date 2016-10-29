@@ -323,6 +323,13 @@ public interface GraphicsDrawer extends CommonDrawer {
     void setFont(Font f);
 
     /**
+     * Return the current rgb color.
+     *
+     * @return current color.
+     */
+    int getColor();
+
+    /**
      * Set the current drawing color. The value is in the format 0x00RRGGBB.
      * NOTE. Currently only black and white is supported. any non black color
      * is treated as white!

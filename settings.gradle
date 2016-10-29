@@ -1,1 +1,1 @@
-include ':app', ':utils', ':ev3projectsbase', ':ev3projectslego'
+include ':app', ':utils', ':ev3projectsbase', ':ev3projectslego', ':utils:javautils'

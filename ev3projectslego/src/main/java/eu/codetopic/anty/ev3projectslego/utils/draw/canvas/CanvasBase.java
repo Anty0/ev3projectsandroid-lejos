@@ -57,7 +57,8 @@ class CanvasBase extends CanvasAbs {
         int width = area.getWidth();
         int height = area.getHeight();
 
-        if (drawRectangleAroundChildren) drawer.bitBlt(null, width + 4, height + 4, 0, 0,
+        if (drawRectangleAroundChildren)
+            drawer.bitBlt(null, drawer.getWidth(), drawer.getHeight(), 0, 0,
                 x - 2, y - 2, width + 4, height + 4, CommonDrawer.ROP_CLEAR);
         drawer.bitBlt(canvas.getContent(), width, height, 0, 0, x, y, width, height, CommonDrawer.ROP_COPY);
         if (drawRectangleAroundChildren) drawer.drawRect(x - 2, y - 2, width + 3, height + 3);

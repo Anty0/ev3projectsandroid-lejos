@@ -7,9 +7,10 @@ import android.widget.Toast;
 
 import eu.codetopic.anty.ev3projectsandroid.utils.Constants;
 import eu.codetopic.anty.ev3projectsbase.ClientConnection;
-import eu.codetopic.utils.Utils;
+import eu.codetopic.utils.AndroidUtils;
 import eu.codetopic.utils.UtilsBase;
 import eu.codetopic.utils.UtilsBase.ProcessProfile;
+import eu.codetopic.utils.thread.JobUtils;
 import eu.codetopic.utils.thread.job.SingletonJobManager;
 
 import static eu.codetopic.utils.UtilsBase.InitType.INIT_NORMAL_MODE;
@@ -43,10 +44,15 @@ public class AppBase extends Application {
                     }
 
                     @Override
-                    public void onForceDisconnected(String address) {
+                    public void onForceDisconnected(final String address) {
                         onChange(address);
-                        Toast.makeText(app, Utils.getFormattedText(app, R.string
-                                .toast_text_connection_lost, address), Toast.LENGTH_LONG).show();
+                        JobUtils.runOnMainThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(app, AndroidUtils.getFormattedText(app, R.string
+                                        .toast_text_connection_lost, address), Toast.LENGTH_LONG).show();
+                            }
+                        });
                     }
 
                     private void onChange(String address) {

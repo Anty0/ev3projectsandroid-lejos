@@ -26,8 +26,9 @@ import eu.codetopic.anty.ev3projectsandroid.utils.Constants;
 import eu.codetopic.anty.ev3projectsandroid.utils.ModelInfoCustomItem;
 import eu.codetopic.anty.ev3projectsbase.ClientConnection;
 import eu.codetopic.anty.ev3projectsbase.ModelInfo;
-import eu.codetopic.utils.Utils;
-import eu.codetopic.utils.log.Log;
+import eu.codetopic.anty.ev3projectsbase.VersionMismatchException;
+import eu.codetopic.java.utils.log.Log;
+import eu.codetopic.utils.AndroidUtils;
 import eu.codetopic.utils.thread.JobUtils;
 import eu.codetopic.utils.thread.job.network.NetworkJob;
 import eu.codetopic.utils.ui.activity.fragment.TitleProvider;
@@ -47,7 +48,7 @@ public class ConnectionFragment extends NavigationFragment implements TitleProvi
     private final BroadcastReceiver mConnectionStateChangedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            boolean connected = ClientConnection.isConnected();
+            boolean connected = ClientConnection.isConnected();// FIXME: 7.10.16 freezes app due synchronisation
             mButtonConnectDisconnect.setText(connected ? R.string.but_disconnect : R.string.but_connect);
             if (connected) mEditTextConnect.setText(ClientConnection.getConnectionAddress());
             mEditTextConnect.setEnabled(!connected);
@@ -85,7 +86,8 @@ public class ConnectionFragment extends NavigationFragment implements TitleProvi
             @Override
             public void onClick(View v) {
                 NetworkJob.start(getHolder(), new ConnectDisconnectWork(getContext(),
-                        mEditTextConnect.getText().toString(), (ModelInfo) mSpinnerSelectModel.getSelectedItem()));
+                        mEditTextConnect.getText().toString(), ((ModelInfoCustomItem)
+                        mSpinnerSelectModel.getSelectedItem()).getModelInfo()));
             }
         });
         mButtonAddModel.setOnClickListener(new View.OnClickListener() {
@@ -146,12 +148,21 @@ public class ConnectionFragment extends NavigationFragment implements TitleProvi
                     ClientConnection.connect(ipAddress);// TODO: 5.10.16 separate setup model and connect
                     ClientConnection.setupModel(model);
                 }
+            } catch (VersionMismatchException e) {
+                Log.d(LOG_TAG, "run", e);
+                JobUtils.runOnMainThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, AndroidUtils.getFormattedText(context,
+                                R.string.toast_text_version_mismatch, ipAddress), Toast.LENGTH_LONG).show();
+                    }
+                });
             } catch (Throwable t) {
                 Log.d(LOG_TAG, "run", t);
                 JobUtils.runOnMainThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(context, Utils.getFormattedText(context,
+                        Toast.makeText(context, AndroidUtils.getFormattedText(context,
                                 R.string.toast_text_action_failed, ipAddress), Toast.LENGTH_LONG).show();
                     }
                 });

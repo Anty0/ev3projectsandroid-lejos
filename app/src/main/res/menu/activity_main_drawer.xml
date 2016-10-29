@@ -7,20 +7,32 @@
 
         <item
             android:id="@+id/nav_connection"
-            android:icon="@drawable/ic_home_dashboard"
-            android:title="@string/title_fragment_connect" /><!--TODO: another icon-->
+            android:icon="@drawable/ic_connection"
+            android:title="@string/title_fragment_connect" />
+
+        <item
+            android:id="@+id/nav_test_model"
+            android:enabled="false"
+            android:icon="@drawable/ic_test_model"
+            android:title="@string/title_fragment_test_model" />
 
         <item
             android:id="@+id/nav_remote_control"
-            android:icon="@drawable/ic_home_dashboard"
-            android:title="@string/title_fragment_remote_control"
-            android:visible="false" /><!--TODO: another icon-->
+            android:enabled="false"
+            android:icon="@drawable/ic_remote"
+            android:title="@string/title_fragment_remote_control" />
 
         <item
             android:id="@+id/nav_advanced_remote_control"
-            android:icon="@drawable/ic_home_dashboard"
-            android:title="@string/title_fragment_remote_control"
-            android:visible="false" /><!--TODO: another icon-->
+            android:enabled="false"
+            android:icon="@drawable/ic_remote"
+            android:title="@string/title_fragment_advanced_remote_control" />
+
+        <item
+            android:id="@+id/nav_slam_control"
+            android:enabled="false"
+            android:icon="@drawable/ic_map"
+            android:title="@string/title_fragment_slam_control" />
 
     </group>
 
@@ -35,7 +47,7 @@
 
         <item
             android:id="@+id/nav_debug"
-            android:icon="@drawable/ic_action_settings"
+            android:icon="@drawable/ic_adb_debug"
             android:title="@string/action_debug"
             android:visible="false"/>
 
