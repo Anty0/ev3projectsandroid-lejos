@@ -19,7 +19,7 @@ public interface RMIModes {
     enum BasicMode {
         TEST_FORWARD("Test-Forward"), TEST_ROTATE("Test-Rotate"), BEACON_FOLLOW("BeaconFollow"),
         GRAPHICS_SCAN_LINES("GraphicsScan-Lines"), GRAPHICS_SCAN_DOTS("GraphicsScan-Dots"),
-        SLAM_CLIENT("SLAM Client");
+        SLAM_CLIENT("SLAM Client"), LINE_FOLLOW("Line follower");
 
         private final String name;
 

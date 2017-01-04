@@ -39,7 +39,7 @@ public final class DefaultModelInfo {
 
     private static final String SENSOR_COLOR_PORT = "S3";
     private static final double SENSOR_COLOR_OFFSET_X = 0d;
-    private static final double SENSOR_COLOR_OFFSET_Y = 3.5d;
+    private static final double SENSOR_COLOR_OFFSET_Y = 3.5d;// TODO: 4.1.17 remeasure
 
     private DefaultModelInfo() {
     }

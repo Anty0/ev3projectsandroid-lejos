@@ -17,6 +17,7 @@ import android.view.MenuItem;
 
 import eu.codetopic.anty.ev3projectsandroid.fragment.AdvancedRemoteControl;
 import eu.codetopic.anty.ev3projectsandroid.fragment.ConnectionFragment;
+import eu.codetopic.anty.ev3projectsandroid.fragment.LineFollowFragment;
 import eu.codetopic.anty.ev3projectsandroid.fragment.RemoteControlFragment;
 import eu.codetopic.anty.ev3projectsandroid.fragment.TestModelFragment;
 import eu.codetopic.anty.ev3projectsandroid.fragment.slam.SlamControlFragment;
@@ -73,6 +74,9 @@ public class MainActivity extends NavigationActivity {
         } else if (fragmentClass.equals(SlamControlFragment.class)) {
             menu.findItem(R.id.nav_slam_control).setChecked(true);
             return true;
+        } else if (fragmentClass.equals(LineFollowFragment.class)) {
+            menu.findItem(R.id.nav_line_follow).setChecked(true);
+            return true;
         }
 
         return super.onUpdateSelectedNavigationMenuItem(currentFragment, menu);
@@ -93,6 +97,7 @@ public class MainActivity extends NavigationActivity {
         menu.findItem(R.id.nav_remote_control).setEnabled(true);
         menu.findItem(R.id.nav_advanced_remote_control).setEnabled(true);
         menu.findItem(R.id.nav_slam_control).setEnabled(true);
+        menu.findItem(R.id.nav_line_follow).setEnabled(true);
         return true;
     }
 
@@ -114,6 +119,9 @@ public class MainActivity extends NavigationActivity {
             return true;
         } else if (id == R.id.nav_slam_control) {
             replaceFragment(SlamControlFragment.class);
+            return true;
+        } else if (id == R.id.nav_line_follow) {
+            replaceFragment(LineFollowFragment.class);
             return true;
         } else if (id == R.id.nav_settings) {
             //startActivity(new Intent(this, SettingsActivity.class));// TODO: 14.10.16 create

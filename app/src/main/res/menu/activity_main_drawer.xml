@@ -34,6 +34,11 @@
             android:icon="@drawable/ic_map"
             android:title="@string/title_fragment_slam_control" />
 
+        <item
+            android:id="@+id/nav_line_follow"
+            android:enabled="false"
+            android:title="@string/title_fragment_line_follow" />
+
     </group>
 
     <group

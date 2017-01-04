@@ -83,9 +83,9 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.jjoe64:graphview:4.2.1'
+    //compile 'com.jjoe64:graphview:4.2.1'//TODO: use
     /*compile('com.mikepenz:aboutlibraries:5.8.1@aar') {
         transitive = true
     }*/
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 }

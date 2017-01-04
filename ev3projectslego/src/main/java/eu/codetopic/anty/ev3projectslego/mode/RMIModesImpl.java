@@ -13,6 +13,7 @@ import eu.codetopic.anty.ev3projectsbase.RMIModes;
 import eu.codetopic.anty.ev3projectslego.hardware.Hardware;
 import eu.codetopic.anty.ev3projectslego.mode.base.BeaconFollowMode;
 import eu.codetopic.anty.ev3projectslego.mode.base.GraphicsScannerMode;
+import eu.codetopic.anty.ev3projectslego.mode.base.LineFollowMode;
 import eu.codetopic.anty.ev3projectslego.mode.base.SlamClientMode;
 import eu.codetopic.anty.ev3projectslego.mode.base.TestForwardMode;
 import eu.codetopic.anty.ev3projectslego.mode.base.TestRotateMode;
@@ -35,6 +36,7 @@ public class RMIModesImpl implements RMIModes {
         AVAILABLE_MODES.put(BasicMode.GRAPHICS_SCAN_LINES, new GraphicsScannerMode.Lines());
         AVAILABLE_MODES.put(BasicMode.GRAPHICS_SCAN_DOTS, new GraphicsScannerMode.Dots());
         AVAILABLE_MODES.put(BasicMode.SLAM_CLIENT, new SlamClientMode());
+        AVAILABLE_MODES.put(BasicMode.LINE_FOLLOW, new LineFollowMode());
     }
 
     private final Looper looper;
