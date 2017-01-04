@@ -52,7 +52,7 @@ public class PathManager {
         Path.Step start = path.get(0);
         while (startIndex < len - 1) {
             for (int i = startIndex + 1; i < len; i++) {
-                if (!isConnectible(path, start, path.get(i))) {
+                if (!isConnectible(start, path.get(i))) {
                     for (int j = startIndex + 1; j < i - 1; j++) {
                         path.remove(startIndex + 1);
                     }
@@ -72,7 +72,7 @@ public class PathManager {
         return path;
     }
 
-    private boolean isConnectible(Path path, Path.Step from, Path.Step to) {
+    private boolean isConnectible(Path.Step from, Path.Step to) {
         int sx = from.getX(), sy = from.getY();
         double aX = sx - to.getX(), aY = sy - to.getY();
         double rAngle = Math.atan2(aY, aX);
