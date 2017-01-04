@@ -212,7 +212,7 @@ public class AStarPathFinder {
      * @param y     The y coordinate of the location to check
      * @return True if the location is valid for the given mover
      */
-    protected boolean isValidLocation(Mover mover, int sx, int sy, int x, int y) {
+    public boolean isValidLocation(Mover mover, int sx, int sy, int x, int y) {
         if (!checkLocation(mover, sx, sy, x, y)) return false;
         for (int s = 1; s < vehicleSize; s++) {
             for (int i = -s; i <= s; i++) {

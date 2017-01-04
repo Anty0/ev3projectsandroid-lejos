@@ -43,7 +43,48 @@ public class PathManager {
 
     @Nullable
     private Path generatePath(Pose pose) {
-        return pathFinder.findPath(null, (int) pose.getX(), (int) pose.getY(), targetDetector);
+        Path path = pathFinder.findPath(null, (int) pose.getX(), (int) pose.getY(), targetDetector);
+        if (path == null) return null;
+        if (path.isEmpty()) return path;
+
+        int len = path.size();
+        int startIndex = 0;
+        Path.Step start = path.get(0);
+        while (startIndex < len - 1) {
+            for (int i = startIndex + 1; i < len; i++) {
+                if (!isConnectible(path, start, path.get(i))) {
+                    for (int j = startIndex + 1; j < i - 1; j++) {
+                        path.remove(startIndex + 1);
+                    }
+                    startIndex++;
+                    start = path.get(startIndex);
+                    break;
+                } else if (i == len - 1) {
+                    for (int j = startIndex + 1; j < i; j++) {
+                        path.remove(startIndex + 1);
+                    }
+                    startIndex++;
+                    start = path.get(startIndex);
+                    break;
+                }
+            }
+        }
+        return path;
+    }
+
+    private boolean isConnectible(Path path, Path.Step from, Path.Step to) {
+        int sx = from.getX(), sy = from.getY();
+        double aX = sx - to.getX(), aY = sy - to.getY();
+        double rAngle = Math.atan2(aY, aX);
+        double distance = Math.sqrt(Math.pow(aX, 2) + Math.pow(aY, 2));
+        for (double i = 0.5D; i < distance; i += 0.5D) {
+            int x = (int) (Math.cos(rAngle) * distance) + sx;
+            int y = (int) (Math.sin(rAngle) * distance) + sy;
+            if (!pathFinder.isValidLocation(null, sx, sy, x, y)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void makeMove(RMISlamMode slamMode, PoseHolder poseHolder, MCLPoseProvider mcl, int tilesLimit) {
